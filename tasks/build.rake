@@ -60,7 +60,7 @@ end
 # |_|   |_|_|\___| |_____|_|___/\__|___/
 #
 
-CONFIGFILES=`./bin/update_index --config-files`.split
+CONFIGFILES=`ruby ./bin/update_index --config-files`.split
 
 
 CSSFROMLESS=FileList['css/**/*.less'].ext('.css')
@@ -72,7 +72,7 @@ CSSFROMLESS=FileList['css/**/*.less'].ext('.css')
 #  \____\___/|_| |_|_| |_|\__, | |_|   |_|_|\___||___/
 #                         |___/
 file 'config/goals.json' => [ 'config/entities.json', 'docs/goals.csv', 'docs/subgoals.csv', 'bin/autogoal.js' ] do
-  sh "./bin/autogoal.js"
+  sh "node ./bin/autogoal.js"
 end
 CLOBBER.add('config/goals.json')
 
@@ -91,13 +91,13 @@ file 'js/config.js' => CONFIGFILES do |t|
     "--#{v[0].to_s} window.wooga.castle.#{k}:config/#{v[1]}"
   }.join(" ")
 
-  sh "./bin/json_to_script -f #{t.name} #{options}"
+  sh "ruby ./bin/json_to_script -f #{t.name} #{options}"
 end
 
 CLOBBER.add 'js/config.js'
 
 file 'config/version' => '.git/index' do |t|
-  sh "printf #{CURRENTCOMMIT} > #{t.name}"
+  sh "cat #{CURRENTCOMMIT} > #{t.name}"
 end
 
 CLOBBER.add 'config/version'
@@ -144,23 +144,23 @@ task :default => (CSSFROMLESS + GENERATEDSPRITE << 'js/config.js')
 FILES_TO_COPY=FileList.new
 
 
-JS_FROM_INDEX=`./bin/extract_files -e js index.html`.split
-CSS_FROM_INDEX=`./bin/extract_files -e css index.html`.split
-IMAGES_FROM_CSS=`./bin/extract_files -b css -p -e png -e gif -e jpg #{CSS_FROM_INDEX.join(" ").gsub(".css",".less")} | sort | uniq`.split
-IMAGES_FROM_ENTITIES=`./bin/extract_files config/entities.json -e png -e jpg -e gif -p  -b images/entities/ | sort | uniq`.split
-IMAGES_FROM_GOALS=`./bin/extract_files config/goals.json -e png -e jpg -e gif -p  -b images/entities/ | sort | uniq`.split
-IMAGES_FROM_INDEX=`./bin/extract_files -e png -e jpg -e gif index.html | egrep  "images"  | sort | uniq`.split
+JS_FROM_INDEX=`ruby ./bin/extract_files -e js index.html`.split
+CSS_FROM_INDEX=`ruby ./bin/extract_files -e css index.html`.split
+IMAGES_FROM_CSS=`ruby ./bin/extract_files -b css -p -e png -e gif -e jpg #{CSS_FROM_INDEX.join(" ").gsub(".css",".less")} | sort | uniq`.split
+IMAGES_FROM_ENTITIES=`ruby ./bin/extract_files config/entities.json -e png -e jpg -e gif -p  -b images/entities/ | sort | uniq`.split
+IMAGES_FROM_GOALS=`ruby ./bin/extract_files config/goals.json -e png -e jpg -e gif -p  -b images/entities/ | sort | uniq`.split
+IMAGES_FROM_INDEX=`ruby ./bin/extract_files -e png -e jpg -e gif index.html | grep  "images"  | sort | uniq`.split
 
 
 STYLE_FILE_NAME='style.css'
 JS_FILE_NAME='app.js'
 
 file DEST + '/version' => [DEST, '.git/index'] do
-  sh "printf #{CURRENTCOMMIT} > #{DEST}/version"
+  sh "cat #{CURRENTCOMMIT} > #{DEST}/version"
 end
 
 file DEST + '/index.html' => 'index.html' do
-  sh "cat index.html | ./bin/only_one_css_or_script --js-name #{JS_FILE_NAME} > #{DEST}/index.html"
+  sh "cat index.html | ruby ./bin/only_one_css_or_script --js-name #{JS_FILE_NAME} > #{DEST}/index.html"
 end
 
 

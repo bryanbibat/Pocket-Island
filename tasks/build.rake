@@ -166,7 +166,7 @@ end
 
 file DEST + '/app.js' => [DEST]+JS_FROM_INDEX.dup << 'index.html' << DEST do |t|
   sh "cat js/config.js > #{t.name}"
-  sh "cat #{JS_FROM_INDEX.reject{|f| f =~ /\/config\.js/ }.join(" ")} | bin/yuicompressor --type js >> #{t.name}"
+  sh "cat #{JS_FROM_INDEX.reject{|f| f =~ /\/config\.js/ }.join(" ")} | sh bin/yuicompressor --type js >> #{t.name}"
 end
 
 CORE_FILES=FileList['index.html', JS_FILE_NAME, 'version']

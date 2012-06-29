@@ -97,7 +97,7 @@ end
 CLOBBER.add 'js/config.js'
 
 file 'config/version' => '.git/index' do |t|
-  sh "echo #{CURRENTCOMMIT} > #{t.name}"
+  sh "sh printf #{CURRENTCOMMIT} > #{t.name}"
 end
 
 CLOBBER.add 'config/version'
@@ -149,14 +149,14 @@ CSS_FROM_INDEX=`ruby ./bin/extract_files -e css index.html`.split
 IMAGES_FROM_CSS=`ruby ./bin/extract_files -b css -p -e png -e gif -e jpg #{CSS_FROM_INDEX.join(" ").gsub(".css",".less")} | sort | uniq`.split
 IMAGES_FROM_ENTITIES=`ruby ./bin/extract_files config/entities.json -e png -e jpg -e gif -p  -b images/entities/ | sort | uniq`.split
 IMAGES_FROM_GOALS=`ruby ./bin/extract_files config/goals.json -e png -e jpg -e gif -p  -b images/entities/ | sort | uniq`.split
-IMAGES_FROM_INDEX=`ruby ./bin/extract_files -e png -e jpg -e gif index.html | grep  "images"  | sort | uniq`.split
+IMAGES_FROM_INDEX=`ruby ./bin/extract_files -e png -e jpg -e gif index.html | sh egrep  "images"  | sort | uniq`.split
 
 
 STYLE_FILE_NAME='style.css'
 JS_FILE_NAME='app.js'
 
 file DEST + '/version' => [DEST, '.git/index'] do
-  sh "echo #{CURRENTCOMMIT} > #{DEST}/version"
+  sh "sh printf #{CURRENTCOMMIT} > #{DEST}/version"
 end
 
 file DEST + '/index.html' => 'index.html' do

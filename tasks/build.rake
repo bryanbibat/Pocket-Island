@@ -97,7 +97,7 @@ end
 CLOBBER.add 'js/config.js'
 
 file 'config/version' => '.git/index' do |t|
-  sh "cat #{CURRENTCOMMIT} > #{t.name}"
+  sh "echo #{CURRENTCOMMIT} > #{t.name}"
 end
 
 CLOBBER.add 'config/version'
@@ -156,7 +156,7 @@ STYLE_FILE_NAME='style.css'
 JS_FILE_NAME='app.js'
 
 file DEST + '/version' => [DEST, '.git/index'] do
-  sh "cat #{CURRENTCOMMIT} > #{DEST}/version"
+  sh "echo #{CURRENTCOMMIT} > #{DEST}/version"
 end
 
 file DEST + '/index.html' => 'index.html' do
